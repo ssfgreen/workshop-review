@@ -3,8 +3,10 @@ import { ROOMS, type Code, type Component, type Room, type StoryKind } from "../
 
 export interface Filters {
   room: Room | "all";
-  unvoted: boolean;
-  org: "question" | "epic";
+  /** Only codes I have not yet given a thumb up or down. */
+  unrated: boolean;
+  /** How the stories page is organised; epics by default. */
+  org: "epic" | "question";
   kind: StoryKind | "all";
   comp: Component | "all";
 }
@@ -16,8 +18,8 @@ export function parseFilters(query: Record<string, string | undefined>): Filters
   const room = query.room as Room;
   return {
     room: ROOMS.includes(room) ? room : "all",
-    unvoted: query.unvoted === "1",
-    org: query.org === "epic" ? "epic" : "question",
+    unrated: query.unrated === "1",
+    org: query.org === "question" ? "question" : "epic",
     kind: KINDS.includes(query.kind as StoryKind) ? (query.kind as StoryKind) : "all",
     comp: COMPS.includes(query.comp as Component) ? (query.comp as Component) : "all",
   };
@@ -27,8 +29,8 @@ export function parseFilters(query: Record<string, string | undefined>): Filters
 export function filtersToQuery(f: Filters): string {
   const q = new URLSearchParams();
   if (f.room !== "all") q.set("room", f.room);
-  if (f.unvoted) q.set("unvoted", "1");
-  if (f.org !== "question") q.set("org", f.org);
+  if (f.unrated) q.set("unrated", "1");
+  if (f.org !== "epic") q.set("org", f.org);
   if (f.kind !== "all") q.set("kind", f.kind);
   if (f.comp !== "all") q.set("comp", f.comp);
   const s = q.toString();

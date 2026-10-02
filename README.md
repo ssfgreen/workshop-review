@@ -1,9 +1,9 @@
 # Workshop Review
 
 A small web app for a research team to review the draft codes from the ELM differentiation
-workshop (1 October 2026): vote Keep / Unsure / Drop, react with thumbs up or down and a short
-comment on codes, evidence, user stories and epics, suggest new codes, and browse the user stories
-by question or epic. Decisions and structure: [ARCHITECTURE.md](ARCHITECTURE.md).
+workshop (1 October 2026): rate codes, evidence, user stories, epics and suggested codes with a
+thumbs up or down and a short comment, suggest new codes, and browse the user stories by epic or
+question. Decisions and structure: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 The research data is not in this repository. The research repo exports it as a bundle, and the
 seed script loads it into the database.
@@ -40,7 +40,7 @@ python 90_pipeline/scripts/build_workshop_vote_page.py --bundle-out <this repo>/
 ```
 
 Then `npm run db:seed` here (locally, or with the production `DATABASE_URL`). Seeding replaces the
-codes, evidence, stories and epics and keeps everyone's votes, reactions and suggestions. Reactions
+codes, evidence, stories and epics and keeps everyone's ratings, comments and suggestions. Reactions
 on stories are keyed by position: add new stories at the end of a code's list.
 
 ## Deploy (Vercel + Turso)

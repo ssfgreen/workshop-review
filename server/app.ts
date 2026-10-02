@@ -14,7 +14,6 @@ export function createApp(deps: AppDeps) {
   app.route("/session", sessionRoutes);
   app.use("/catalog", requireSession);
   app.use("/activity", requireSession);
-  app.use("/votes/*", requireSession);
   app.use("/reactions/*", requireSession);
   app.use("/suggestions/*", requireSession);
   app.use("/suggestions", requireSession);

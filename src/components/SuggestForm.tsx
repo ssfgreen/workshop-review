@@ -36,7 +36,7 @@ export function SuggestForm({ section }: { section: Section }) {
         <textarea class="field" id={id("ev")} maxLength={800} rows={2} value={form.evidence} onInput={set("evidence")} placeholder="e.g. Room 2, P07, or a quote from a sticky note" />
       </label>
       <button class="primary" type="submit" disabled={add.isPending}>Add suggestion</button>
-      {done && <p class="muted-note">Added. It now appears above for everyone to vote on.</p>}
+      {done && <p class="muted-note">Added. It now appears above for everyone to rate and comment on.</p>}
       {add.error && <p class="muted-note status-warn">{add.error.message}</p>}
     </form>
   );

@@ -10,7 +10,7 @@ export function SignInScreen() {
     <main class="wrap signin">
       <div class="eyebrow">ELM differentiation workshop · code review</div>
       <h1>Sign in to review the codes</h1>
-      <p>Enter the access code your team was given and the name your colleagues know you by. Your name is shown next to your votes, reactions and comments.</p>
+      <p>Enter the access code your team was given and the name your colleagues know you by. Your name is shown next to your ratings and comments.</p>
       <form class="signin-form" onSubmit={(e) => { e.preventDefault(); signIn.mutate({ code, name }); }}>
         <label for="signin-code">Access code
           <input class="field" id="signin-code" type="password" autoComplete="current-password" required value={code} onInput={(e) => setCode(e.currentTarget.value)} />

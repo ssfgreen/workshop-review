@@ -4,7 +4,7 @@ import { useActivity, useCatalog, useSession } from "../api/queries.js";
 import { placeCodes } from "../lib/catalog.js";
 import { indexActivity } from "../lib/tally.js";
 
-const EMPTY: Activity = { votes: [], reactions: [], suggestions: [], people: [] };
+const EMPTY: Activity = { reactions: [], suggestions: [], people: [] };
 
 /**
  * The data every screen reads: the catalogue, people's activity (indexed once per poll) and the

@@ -23,7 +23,7 @@ describe("sign-in and access", () => {
   it("rejects every data route without a session", async () => {
     const { call } = await setup();
     for (const path of ["/catalog", "/activity", "/session"]) expect((await call(path)).status).toBe(401);
-    expect((await call("/votes/KNOW_THE_CLASS", { method: "PUT", body: "{}" })).status).toBe(401);
+    expect((await call(`/reactions/${encodeURIComponent("code:KNOW_THE_CLASS")}`, { method: "PUT", body: "{}" })).status).toBe(401);
   });
 
   it("rejects a wrong access code and a missing name", async () => {
@@ -49,34 +49,39 @@ describe("sign-in and access", () => {
   });
 });
 
-describe("votes, reactions and suggestions", () => {
-  it("records a vote and a reaction and shows them in activity", async () => {
+describe("reactions and suggestions", () => {
+  it("records reactions on a code and on evidence and shows them in activity", async () => {
     const { call, signIn } = await setup();
     const { cookie, person } = await signIn();
-    expect((await call("/votes/KNOW_THE_CLASS", { method: "PUT", cookie, body: JSON.stringify({ value: "keep", note: "Clear" }) })).status).toBe(204);
-    const target = encodeURIComponent("ev:KNOW_THE_CLASS:R1-0001");
-    expect((await call(`/reactions/${target}`, { method: "PUT", cookie, body: JSON.stringify({ value: "up" }) })).status).toBe(204);
-    const act = await (await call("/activity", { cookie })).json() as { votes: unknown[]; reactions: unknown[]; people: unknown[] };
-    expect(act.votes).toEqual([{ personId: person.id, target: "KNOW_THE_CLASS", value: "keep", note: "Clear" }]);
-    expect(act.reactions).toEqual([{ personId: person.id, target: "ev:KNOW_THE_CLASS:R1-0001", value: "up", note: null }]);
+    const put = (target: string, body: unknown) => call(`/reactions/${encodeURIComponent(target)}`, { method: "PUT", cookie, body: JSON.stringify(body) });
+    expect((await put("code:KNOW_THE_CLASS", { value: "up", note: "Clear" })).status).toBe(204);
+    expect((await put("ev:KNOW_THE_CLASS:R1-0001", { value: "down" })).status).toBe(204);
+    const act = await (await call("/activity", { cookie })).json() as { reactions: { target: string }[]; people: unknown[] };
+    expect(act.reactions.sort((x, y) => x.target.localeCompare(y.target))).toEqual([
+      { personId: person.id, target: "code:KNOW_THE_CLASS", value: "up", note: "Clear" },
+      { personId: person.id, target: "ev:KNOW_THE_CLASS:R1-0001", value: "down", note: null },
+    ]);
     expect(act.people).toEqual([person]);
   });
 
-  it("rejects bad values, malformed targets and codes that do not exist", async () => {
+  it("rejects bad values, malformed targets and items that do not exist", async () => {
     const { call, signIn } = await setup();
     const { cookie } = await signIn();
-    expect((await call("/votes/KNOW_THE_CLASS", { method: "PUT", cookie, body: JSON.stringify({ value: "love" }) })).status).toBe(400);
-    expect((await call("/votes/NOT_A_CODE", { method: "PUT", cookie, body: JSON.stringify({ value: "keep" }) })).status).toBe(404);
-    expect((await call(`/reactions/${encodeURIComponent("nonsense")}`, { method: "PUT", cookie, body: "{}" })).status).toBe(400);
-    expect((await call(`/reactions/${encodeURIComponent("epic:missing")}`, { method: "PUT", cookie, body: JSON.stringify({ value: "up" }) })).status).toBe(404);
+    const put = (target: string, body: unknown) => call(`/reactions/${encodeURIComponent(target)}`, { method: "PUT", cookie, body: JSON.stringify(body) });
+    expect((await put("code:KNOW_THE_CLASS", { value: "love" })).status).toBe(400);
+    expect((await put("nonsense", {})).status).toBe(400);
+    expect((await put("code:NOT_A_CODE", { value: "up" })).status).toBe(404);
+    expect((await put("epic:missing", { value: "up" })).status).toBe(404);
+    expect((await put("suggestion:missing0000", { value: "up" })).status).toBe(404);
+    expect((await call("/votes/KNOW_THE_CLASS", { method: "PUT", cookie, body: "{}" })).status).toBe(404); // votes are gone
   });
 
-  it("lets anyone vote on a suggestion but only its author remove it", async () => {
+  it("lets anyone react to a suggestion but only its author remove it", async () => {
     const { call, signIn } = await setup();
     const a = await signIn("A"), b = await signIn("B");
     const res = await call("/suggestions", { method: "POST", cookie: a.cookie, body: JSON.stringify({ section: "q1_grounding", group: "Knowing the class", title: "New code", description: "Means this." }) });
     const s = await res.json() as { id: string };
-    expect((await call(`/votes/s:${s.id}`, { method: "PUT", cookie: b.cookie, body: JSON.stringify({ value: "keep" }) })).status).toBe(204);
+    expect((await call(`/reactions/${encodeURIComponent(`suggestion:${s.id}`)}`, { method: "PUT", cookie: b.cookie, body: JSON.stringify({ value: "up" }) })).status).toBe(204);
     expect((await call(`/suggestions/${s.id}`, { method: "DELETE", cookie: b.cookie })).status).toBe(403);
     expect((await call(`/suggestions/${s.id}`, { method: "DELETE", cookie: a.cookie })).status).toBe(204);
   });

@@ -33,7 +33,7 @@ const codes = (cat.body?.sections ?? []).flatMap((s) => s.groups.flatMap((g) => 
 check(cat.res.ok && codes.length > 0, `catalogue: ${codes.length} codes (${cat.ms} ms)`);
 
 const act = await call<Activity | null>("/activity");
-check(act.res.ok, `activity: ${act.body?.votes.length} votes, ${act.body?.reactions.length} reactions (${act.ms} ms)`);
+check(act.res.ok, `activity: ${act.body?.reactions.length} reactions, ${act.body?.suggestions.length} suggestions (${act.ms} ms)`);
 
 const target = encodeURIComponent(`code:${codes[0].id}`);
 const write = await call(`/reactions/${target}`, { method: "PUT", body: JSON.stringify({ value: "up", note: "smoke test" }) });

@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import type { Suggestion } from "../../shared/activity.js";
+import { suggestionKey } from "../../shared/keys.js";
 import type { Db } from "../db/client.js";
-import { suggestions, votes } from "../db/schema.js";
+import { reactions, suggestions } from "../db/schema.js";
 
 export interface NewSuggestion {
   section: string;
@@ -32,12 +33,16 @@ export async function addSuggestion(db: Db, authorId: string, s: NewSuggestion):
   return toSuggestion(row);
 }
 
-/** Remove a suggestion the person wrote, and the votes cast on it. Returns false if it was not theirs. */
+/** Remove a suggestion the person wrote, and the reactions on it. Returns false if it was not theirs. */
 export async function removeSuggestion(db: Db, authorId: string, id: string): Promise<boolean> {
   const deleted = await db.delete(suggestions).where(and(eq(suggestions.id, id), eq(suggestions.authorId, authorId))).returning({ id: suggestions.id });
   if (!deleted.length) return false;
-  await db.delete(votes).where(eq(votes.target, `s:${id}`));
+  await db.delete(reactions).where(eq(reactions.target, suggestionKey(id)));
   return true;
+}
+
+export async function suggestionExists(db: Db, id: string): Promise<boolean> {
+  return (await db.select({ id: suggestions.id }).from(suggestions).where(eq(suggestions.id, id)).limit(1)).length > 0;
 }
 
 export async function listSuggestions(db: Db): Promise<Suggestion[]> {

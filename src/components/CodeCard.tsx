@@ -4,14 +4,13 @@ import type { Room } from "../../shared/catalog.js";
 import { useReview } from "../hooks/useReview.js";
 import type { PlacedCode } from "../lib/catalog.js";
 import { shortSection } from "../lib/labels.js";
-import { myVote } from "../lib/tally.js";
+import { myThumb } from "../lib/tally.js";
 import { EvidenceItem } from "./Evidence.js";
 import { ReactBar } from "./ReactBar.js";
 import { StoryLine } from "./StoryLine.js";
-import { VoteRow } from "./VoteRow.js";
 import "./CodeCard.css";
 
-/** A code with its evidence, user stories, vote and reactions. With a room chosen, that room's evidence leads. */
+/** A code with its evidence, user stories and reactions. With a room chosen, that room's evidence leads. */
 export function CodeCard({ code: c, room = "all" }: { code: PlacedCode; room?: Room | "all" }) {
   const { ix, me } = useReview();
   const [showRest, setShowRest] = useState(false);
@@ -20,10 +19,10 @@ export function CodeCard({ code: c, room = "all" }: { code: PlacedCode; room?: R
   const rest = filtered ? c.evidence.filter((e) => e.room !== room) : c.evidence.slice(2);
   const roomPeople = [...new Set(first.map((e) => e.who))].sort();
   const also = c.sections.filter((s) => s !== c.sectionKey).map(shortSection);
-  const voted = myVote(ix, c.id, me)?.value;
+  const thumb = myThumb(ix, codeKey(c.id), me);
 
   return (
-    <article class={`card${voted ? ` voted-${voted}` : ""}`} id={`code-${c.id}`}>
+    <article class={`card${thumb ? ` rated-${thumb}` : ""}`} id={`code-${c.id}`}>
       <div class="card-top">
         <div class="title-block">
           <h4 class="code-title">{c.title}</h4>
@@ -54,7 +53,6 @@ export function CodeCard({ code: c, room = "all" }: { code: PlacedCode; room?: R
           <ul class="story-list">{c.stories.map((s, i) => <StoryLine key={i} story={s} code={c} index={i} />)}</ul>
         </details>
       )}
-      <VoteRow target={c.id} />
     </article>
   );
 }

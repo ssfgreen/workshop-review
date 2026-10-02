@@ -17,12 +17,11 @@ export function Header() {
     <header class="wrap intro">
       <div class="eyebrow">ELM differentiation workshop · 1 October 2026 · code review</div>
       <h1>Which codes should we keep?</h1>
-      <p>These are draft codes from the workshop, sorted by the question each came from and grouped by theme. Each one shows the evidence behind it: what someone said in a room, a sticky note from the board, or a chat message. Vote on each code and suggest any that are missing.</p>
+      <p>These are draft codes from the workshop, sorted by the question each came from and grouped by theme. Each one shows the evidence behind it: what someone said in a room, a sticky note from the board, or a chat message. Rate each code and suggest any that are missing.</p>
       <div class="howto">
-        <div><b>Vote</b>Keep, Unsure or Drop. You can change your vote at any time. Everyone sees the totals.</div>
-        <div><b>Add a note</b>Say why, or suggest a better name or a merge with another code.</div>
-        <div><b>Suggest a code</b>Use the form at the end of each question. Colleagues can vote on it too.</div>
-        <div><b>React</b>Thumbs up or down on any code, piece of evidence, user story or epic. The speech-bubble icon adds a short comment.</div>
+        <div><b>Rate</b>Thumbs up or down on any code, piece of evidence, user story or epic. Click again to take it back. Everyone sees the totals.</div>
+        <div><b>Comment</b>The speech-bubble icon adds a short comment: say why, or suggest a better name or a merge with another code.</div>
+        <div><b>Suggest a code</b>Use the form at the end of each question. Colleagues can rate and comment on it too.</div>
       </div>
       <p class="muted-note">Participants: P04, P06 and P07 also took part in the earlier interviews; W01 to W09 were new. Facilitators are not quoted. Sticky notes marked "typed by facilitator" were written down by a facilitator for that participant.</p>
       {session.data && !editing && (

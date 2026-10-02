@@ -7,7 +7,8 @@ import { useFilters } from "../hooks/useFilters.js";
 import { useReview } from "../hooks/useReview.js";
 import { inRoom } from "../lib/filters.js";
 import { questionNumber } from "../lib/labels.js";
-import { myVote } from "../lib/tally.js";
+import { codeKey, suggestionKey } from "../../shared/keys.js";
+import { myThumb } from "../lib/tally.js";
 import "./screens.css";
 
 export function QuestionScreen() {
@@ -33,9 +34,10 @@ export function QuestionScreen() {
   const lead = section.key === "supporting_teaching"
     ? "One to three tasks you would hand to an agent, with a line about why, placed in the column that fits best:"
     : section.columns.length ? null : section.prompt;
-  const visible = (id: string) => !(f.unvoted && myVote(ix, id, me)?.value);
+  // With "only codes I haven't rated" on, hide anything I've given a thumb.
+  const visible = (target: string) => !(f.unrated && myThumb(ix, target, me));
   const anyInRoom = codes.some((c) => c.sectionKey === section.key && inRoom(c, f.room));
-  const suggestions = activity.suggestions.filter((s) => s.section === section.key && visible(`s:${s.id}`))
+  const suggestions = activity.suggestions.filter((s) => s.section === section.key && visible(suggestionKey(s.id)))
     .sort((a, b) => a.created.localeCompare(b.created));
 
   return (
@@ -52,11 +54,11 @@ export function QuestionScreen() {
       {section.groups.map((g) => {
         const placed = codes.filter((c) => c.sectionKey === section.key && c.group === g.title && inRoom(c, f.room));
         if (!placed.length) return null;
-        const cards = placed.filter((c) => visible(c.id));
+        const cards = placed.filter((c) => visible(codeKey(c.id)));
         return (
           <section class="group" key={g.title}>
             <h3>{g.title} <span class="n">{f.room === "all" ? `${g.codes.length} code${g.codes.length > 1 ? "s" : ""}` : `${placed.length} of ${g.codes.length} codes`}</span></h3>
-            {cards.length === 0 && <p class="muted-note">You've voted on every code in this group.</p>}
+            {cards.length === 0 && <p class="muted-note">You've rated every code in this group.</p>}
             {cards.map((c) => <CodeCard key={c.id} code={c} room={f.room} />)}
           </section>
         );

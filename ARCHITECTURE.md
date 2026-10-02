@@ -1,9 +1,10 @@
 # Architecture
 
-Workshop Review lets a research team vote on, react to and comment on the draft codes from a
-teacher workshop, with the evidence behind each code, and browse the user stories derived from
-them. It replaces a single-file claude.ai artifact that outgrew one file (decisions follow the
-research repo's `greenfield-architecture` skill).
+Workshop Review lets a research team rate (thumbs up or down) and comment on the draft codes from
+a teacher workshop, the evidence behind each code, the user stories derived from them and their
+epics. Thumbs replaced an earlier Keep / Unsure / Drop vote (migration `0001_drop_votes`).
+It replaces a single-file claude.ai artifact that outgrew one file (decisions follow the research
+repo's `greenfield-architecture` skill).
 
 ## 1. Deployment target
 
@@ -23,14 +24,14 @@ proxying `/api`.
 
 - Catalogue (sections, groups, codes, evidence, user stories, epics): database tables, written
   only by `npm run db:seed` from a data bundle exported by the research repo. Read-only at runtime.
-- People's input (votes, notes, reactions, suggestions, display names): database tables, one
-  row per person per target, written through the API.
+- People's input (a thumb and comment per person per target, suggested codes, display names):
+  database tables, written through the API.
 - Server data on the client: TanStack Query (via `preact/compat`); no fetch-into-state. The
   catalogue is fetched once; people's input comes from one `/api/activity` read, polled every
   15 s and refetched after each write (writes show at once through optimistic updates). Polling
   replaces the old artifact's realtime store; switch to server-sent events only if 15 s is too slow.
-- Navigation and filters that should survive a refresh (question, room, organise-by, kind,
-  component, only-unvoted): the URL, through `preact-iso`.
+- Navigation and filters that should survive a refresh (question, room, organise-by with epic as
+  the default, kind, component, only-unrated): the URL, through `preact-iso`.
 - Local UI state (open comment panel, drawer, dialog, typed drafts): the component that owns it.
 
 ## 3. Module map
@@ -58,7 +59,7 @@ Lists are at most ~90 cards per view, so no virtualisation yet; add it if a view
 Participant quotes are research data, so every `/api` route except sign-in requires a session.
 Sign-in takes the team access code (`ACCESS_CODE`) and a display name; the server issues a
 random person id and an HMAC-signed, httpOnly cookie (`SESSION_SECRET`). Names are what people
-type, editable later; votes and reactions are keyed by person id.
+type, editable later; ratings and comments are keyed by person id.
 
 ## 6. Verification
 

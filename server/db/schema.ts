@@ -70,18 +70,7 @@ export const people = sqliteTable("people", {
   createdAt: text("created_at").notNull(),
 });
 
-export const votes = sqliteTable(
-  "votes",
-  {
-    personId: text("person_id").notNull(),
-    target: text("target").notNull(),
-    value: text("value"),
-    note: text("note"),
-    updatedAt: text("updated_at").notNull(),
-  },
-  (t) => [primaryKey({ columns: [t.personId, t.target] })],
-);
-
+// Thumbs up / down and a comment, one row per person per target (see shared/keys.ts).
 export const reactions = sqliteTable(
   "reactions",
   {

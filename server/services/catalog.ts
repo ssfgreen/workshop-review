@@ -3,7 +3,7 @@ import type { Catalog, Code, Evidence, Section, Story } from "../../shared/catal
 import type { Db } from "../db/client.js";
 import { codes, epics, evidence, groups, meta, sections, stories } from "../db/schema.js";
 
-/** Replace the whole catalogue with a bundle. People's votes, reactions and suggestions are kept. */
+/** Replace the whole catalogue with a bundle. People's ratings, comments and suggestions are kept. */
 export async function seedCatalog(db: Db, bundle: Catalog): Promise<{ codes: number; evidence: number; stories: number }> {
   let nCodes = 0, nEvidence = 0, nStories = 0;
   await db.transaction(async (tx) => {

@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Activity, ReactionValue, Session, Suggestion, VoteValue } from "../../shared/activity.js";
+import type { Activity, ReactionValue, Session, Suggestion } from "../../shared/activity.js";
 import type { Catalog } from "../../shared/catalog.js";
 import { api, ApiError, send } from "./client.js";
 
 const ACTIVITY = ["activity"] as const;
-const POLL_MS = 15_000; // how quickly colleagues' votes and reactions appear
+const POLL_MS = 15_000; // how quickly colleagues' reactions appear
 
 export function useSession() {
   return useQuery({
@@ -36,22 +36,22 @@ export function useRename() {
 }
 
 /**
- * Write one vote or reaction. The change shows at once (optimistic update on the cached
- * activity) and the poll is refreshed afterwards, so the server stays the source of truth.
+ * Set my thumb and comment on one target. The change shows at once (optimistic update on the
+ * cached activity) and the poll is refreshed afterwards, so the server stays the source of truth.
  */
-function useResponse<V extends string>(kind: "votes" | "reactions") {
+export function useReact() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (r: { target: string; value: V | null; note: string | null }) =>
-      api<void>(`/${kind}/${encodeURIComponent(r.target)}`, send("PUT", { value: r.value, note: r.note })),
+    mutationFn: (r: { target: string; value: ReactionValue | null; note: string | null }) =>
+      api<void>(`/reactions/${encodeURIComponent(r.target)}`, send("PUT", { value: r.value, note: r.note })),
     onMutate: async (r) => {
       await qc.cancelQueries({ queryKey: ACTIVITY });
       const me = qc.getQueryData<Session>(["session"])?.id;
       const prev = qc.getQueryData<Activity>(ACTIVITY);
       if (prev && me) {
-        const rest = prev[kind].filter((x) => !(x.personId === me && x.target === r.target));
+        const rest = prev.reactions.filter((x) => !(x.personId === me && x.target === r.target));
         const next = r.value || r.note ? [...rest, { personId: me, target: r.target, value: r.value, note: r.note }] : rest;
-        qc.setQueryData<Activity>(ACTIVITY, { ...prev, [kind]: next } as Activity);
+        qc.setQueryData<Activity>(ACTIVITY, { ...prev, reactions: next });
       }
       return { prev };
     },
@@ -59,9 +59,6 @@ function useResponse<V extends string>(kind: "votes" | "reactions") {
     onSettled: () => qc.invalidateQueries({ queryKey: ACTIVITY }),
   });
 }
-
-export const useVote = () => useResponse<VoteValue>("votes");
-export const useReact = () => useResponse<ReactionValue>("reactions");
 
 export function useAddSuggestion() {
   const qc = useQueryClient();

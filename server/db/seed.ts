@@ -1,6 +1,6 @@
 // Loads the catalogue from a bundle exported by the research repo:
 //   npm run db:seed -- [path/to/bundle.json]   (default data/bundle.json)
-// Replaces codes, evidence, stories and epics; never touches people's votes, reactions or suggestions.
+// Replaces codes, evidence, stories and epics; never touches people's ratings, comments or suggestions.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { Catalog } from "../../shared/catalog.js";
