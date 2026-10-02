@@ -1,0 +1,10 @@
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-block: 10px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.tab { text-decoration: none; color: inherit; display: inline-flex; gap: 6px; align-items: baseline; }
+.tab .n { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab[aria-current="page"] .n { color: var(--surface); opacity: 0.85; }
+.progress { margin-left: auto; font-size: 0.88rem; color: var(--muted); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.progress label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.progress select { border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; background: var(--surface); }
+@media (max-width: 520px) { .progress { margin-left: 0; } }

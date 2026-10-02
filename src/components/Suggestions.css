@@ -1,0 +1,9 @@
+.card.suggested { border-style: dashed; }
+.badge { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.suggest-evidence { display: grid; gap: 2px; }
+.suggest-evidence p { margin: 0; }
+.link-button.danger { color: var(--drop); justify-self: start; font-size: 0.85rem; }
+.suggest-form { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; }
+.suggest-form label { display: grid; gap: 4px; font-size: 0.9rem; }
+.suggest-form textarea { resize: vertical; }
+.suggest-form .primary { justify-self: start; }

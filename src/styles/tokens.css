@@ -1,0 +1,55 @@
+/* Design tokens and base elements only; components own their styles. */
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Literata:opsz,wght@7..72,500;7..72,650&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  --bg: #f3f5f2; --surface: #ffffff; --ink: #1c2a31; --muted: #56656c; --line: #d8dfdb;
+  --accent: #2c6a5b; --accent-soft: #e2efea;
+  --note: #fbf3c8; --note-ink: #3d3720; --note-edge: #e6d98f; --chat: #e7eef6;
+  --keep: #2b7a4b; --keep-soft: #e1f2e7; --unsure: #a8701a; --unsure-soft: #f8ecd6; --drop: #b03a3a; --drop-soft: #f7e2e0;
+  --hl: #f3df93; --hl-ink: #1c2a31;
+  --display: "Literata", Georgia, "Times New Roman", serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11181b; --surface: #182126; --ink: #e4ebe8; --muted: #9eadb2; --line: #2b383d;
+    --accent: #79c0ad; --accent-soft: #1e3530; --note: #3a3622; --note-ink: #f1e9bf; --note-edge: #5c5530;
+    --chat: #1f2c38; --keep: #6cc792; --keep-soft: #1c3326; --unsure: #e2ad5a; --unsure-soft: #3a2e1b;
+    --drop: #ec8a84; --drop-soft: #3d2221; --hl: #5b4b18; --hl-ink: #fbf1cf; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11181b; --surface: #182126; --ink: #e4ebe8; --muted: #9eadb2; --line: #2b383d;
+  --accent: #79c0ad; --accent-soft: #1e3530; --note: #3a3622; --note-ink: #f1e9bf; --note-edge: #5c5530;
+  --chat: #1f2c38; --keep: #6cc792; --keep-soft: #1c3326; --unsure: #e2ad5a; --unsure-soft: #3a2e1b;
+  --drop: #ec8a84; --drop-soft: #3d2221; --hl: #5b4b18; --hl-ink: #fbf1cf; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Small shared elements used across components */
+.wrap { max-width: 860px; margin: 0 auto; padding-inline: 16px; }
+.eyebrow { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted-note { font-size: 0.85rem; color: var(--muted); margin: 0; }
+.mono { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.chip { background: var(--accent-soft); color: var(--ink); border-radius: 999px; padding: 2px 9px; font-size: 0.82rem; }
+.chip.plain { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.chip.room { background: var(--note); color: var(--note-ink); border: 1px solid var(--note-edge); }
+.link-button { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font-size: 0.9rem; }
+.primary { background: var(--accent); color: var(--surface); border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-weight: 700; }
+.primary:disabled { opacity: 0.6; cursor: default; }
+.pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; cursor: pointer; font-size: 0.92rem; }
+.pill[aria-pressed="true"], .pill[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.field { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--bg); width: 100%; }
+.status-warn { color: var(--drop); }
+.footer { padding-block: 24px 40px; }

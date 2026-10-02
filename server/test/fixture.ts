@@ -19,7 +19,7 @@ export function fixtureCatalog(): Catalog {
             id: "KNOW_THE_CLASS", title: "Know the class", gist: "Needs the class basics.", definition: "Year, subject, level.",
             participants: ["W01", "P07"], rooms: ["Room 1", "Room 2"], sections: ["q1_grounding"],
             evidence: [
-              { ref: "R1-0001", kind: "turn", room: "Room 1", who: "W01", section: "q1_grounding", text: "It needs to know the year group. And the level.", example: true, span: [0, 33] },
+              { ref: "R1-0001", kind: "turn", room: "Room 1", who: "W01", section: "q1_grounding", text: "It needs to know the year group. And the level.", example: true, span: [0, 32] },
               { ref: "note:6d569606-1f2e-4a3b-9c8d-0123456789ab", kind: "note", room: "Room 2", who: "P07", section: "q1_grounding", text: "Year group", example: false, column: "What would it need to know?", scribed: false },
             ],
             stories: [{ as: "class teacher", want: "to set up a class once", so_that: "I don't repeat it", kind: "setting", components: ["data"], epics: ["adapt"] }],

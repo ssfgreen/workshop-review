@@ -1,0 +1,16 @@
+.react { position: relative; display: inline-flex; gap: 2px; align-items: center; margin-left: auto; font-size: 0.78rem; text-transform: none; letter-spacing: normal; }
+.rb { display: inline-flex; align-items: center; gap: 3px; border: 1px solid transparent; background: transparent; color: var(--muted); border-radius: 6px; padding: 2px 5px; cursor: pointer; line-height: 1; }
+.rb:hover { border-color: var(--line); }
+.rb .c { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.rb.up[aria-pressed="true"] { color: var(--keep); background: var(--keep-soft); border-color: var(--keep); }
+.rb.down[aria-pressed="true"] { color: var(--drop); background: var(--drop-soft); border-color: var(--drop); }
+.rb.note.has, .rb.note[aria-expanded="true"] { color: var(--accent); }
+.react-panel { position: absolute; right: 0; top: calc(100% + 4px); z-index: 12; width: min(340px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); padding: 10px; display: grid; gap: 8px; font-size: 0.88rem; }
+.react-list { display: grid; gap: 4px; max-height: 180px; overflow-y: auto; }
+.react-list .o { color: var(--muted); }
+.react-list .o b { color: var(--ink); font-weight: 700; }
+.react-list .tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 4px; }
+.react-list .tag.up { color: var(--keep); }
+.react-list .tag.down { color: var(--drop); }
+.react-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.primary.small { padding: 5px 12px; font-size: 0.85rem; }
