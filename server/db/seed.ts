@@ -23,6 +23,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try { process.loadEnvFile(); } catch { /* no .env: rely on the environment */ }
   const path = process.argv[2] ?? "data/bundle.json";
   const bundle = checkBundle(JSON.parse(readFileSync(path, "utf8")));
-  const n = await seedCatalog(getDb(), bundle);
+  const n = await seedCatalog(await getDb(), bundle);
   console.log(`Seeded ${n.codes} codes, ${n.evidence} evidence items, ${n.stories} stories from ${path}.`);
 }

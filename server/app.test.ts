@@ -85,11 +85,20 @@ describe("votes, reactions and suggestions", () => {
 describe("Vercel entry", () => {
   // Guards the deployment shape: the entry must import cleanly under Node ESM with only env vars,
   // and never read research data from the filesystem at runtime.
-  it("builds the app from environment variables alone", async () => {
+  it("answers with a readable error when settings are missing, then recovers once they are set", async () => {
     const t = await testDb(false);
     cleanup = t.cleanup;
-    Object.assign(process.env, { ACCESS_CODE: "x", SESSION_SECRET: "y".repeat(32), DATABASE_URL: "file::memory:" });
+    for (const k of ["ACCESS_CODE", "SESSION_SECRET", "DATABASE_URL"]) delete process.env[k];
     const mod = await import("../api/index.js");
     for (const verb of ["GET", "POST", "PUT", "PATCH", "DELETE"]) expect(typeof (mod as Record<string, unknown>)[verb]).toBe("function");
+
+    const broken = await mod.GET(new Request("http://localhost/api/health"));
+    expect(broken.status).toBe(500);
+    expect(((await broken.json()) as { error: string }).error).toContain("Missing settings: ACCESS_CODE, SESSION_SECRET, DATABASE_URL");
+
+    Object.assign(process.env, { ACCESS_CODE: "x", SESSION_SECRET: "y".repeat(32), DATABASE_URL: "file::memory:" });
+    const ok = await mod.GET(new Request("http://localhost/api/health"));
+    expect(ok.status).toBe(200);
+    expect(await ok.json()).toEqual({ ok: true });
   });
 });

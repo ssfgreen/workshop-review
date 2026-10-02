@@ -4,9 +4,26 @@
 import { handle } from "hono/vercel";
 import { createAppFromEnv } from "../server/app.js";
 
-const handler = handle(createAppFromEnv());
-export const GET = handler;
-export const POST = handler;
-export const PUT = handler;
-export const PATCH = handler;
-export const DELETE = handler;
+type Handler = (req: Request) => Response | Promise<Response>;
+
+// Built on the first request and reused. If it cannot be built (a missing setting, an unreachable
+// database), answer with a readable error instead of crashing, and try again on the next request.
+let handler: Promise<Handler> | null = null;
+
+async function serve(req: Request): Promise<Response> {
+  try {
+    handler ??= createAppFromEnv().then((app) => handle(app) as Handler);
+    return await (await handler)(req);
+  } catch (err) {
+    handler = null;
+    console.error("API failed to start:", err);
+    const reason = err instanceof Error ? err.message : "unknown error";
+    return Response.json({ error: `The server could not start. ${reason} Check the project's environment variables.` }, { status: 500 });
+  }
+}
+
+export const GET = serve;
+export const POST = serve;
+export const PUT = serve;
+export const PATCH = serve;
+export const DELETE = serve;

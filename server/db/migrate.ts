@@ -11,6 +11,6 @@ export async function migrateDb(db: Db): Promise<void> {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try { process.loadEnvFile(); } catch { /* no .env: rely on the environment */ }
-  await migrateDb(getDb());
+  await migrateDb(await getDb());
   console.log("Migrations applied.");
 }

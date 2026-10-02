@@ -25,9 +25,17 @@ export function createApp(deps: AppDeps) {
   return app;
 }
 
+/** Names of required settings that are missing (names only, never values). */
+export function missingSettings(env = process.env): string[] {
+  return ["ACCESS_CODE", "SESSION_SECRET", "DATABASE_URL"].filter((k) => !env[k]);
+}
+
 /** Build the app from environment variables (deployment and local dev). */
-export function createAppFromEnv() {
-  const accessCode = process.env.ACCESS_CODE, sessionSecret = process.env.SESSION_SECRET;
-  if (!accessCode || !sessionSecret) throw new Error("ACCESS_CODE and SESSION_SECRET must be set.");
-  return createApp({ db: getDb(), accessCode, sessionSecret, secureCookies: process.env.NODE_ENV === "production" || !!process.env.VERCEL });
+export async function createAppFromEnv() {
+  const missing = missingSettings();
+  if (missing.length) throw new Error(`Missing setting${missing.length > 1 ? "s" : ""}: ${missing.join(", ")}.`);
+  return createApp({
+    db: await getDb(), accessCode: process.env.ACCESS_CODE!, sessionSecret: process.env.SESSION_SECRET!,
+    secureCookies: process.env.NODE_ENV === "production" || !!process.env.VERCEL,
+  });
 }
