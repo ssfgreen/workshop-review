@@ -77,8 +77,12 @@ export async function getCatalog(db: Db): Promise<Catalog> {
   };
 }
 
-/** Code ids and section keys that exist, for validating writes. */
-export async function getCatalogIds(db: Db): Promise<{ codeIds: Set<string>; sectionKeys: Set<string> }> {
-  const [c, s] = await Promise.all([db.select({ id: codes.id }).from(codes), db.select({ key: sections.key }).from(sections)]);
-  return { codeIds: new Set(c.map((r) => r.id)), sectionKeys: new Set(s.map((r) => r.key)) };
+/** Code ids, section keys and epic ids that exist, for validating writes. */
+export async function getCatalogIds(db: Db): Promise<{ codeIds: Set<string>; sectionKeys: Set<string>; epicIds: Set<string> }> {
+  const [c, s, e] = await Promise.all([
+    db.select({ id: codes.id }).from(codes),
+    db.select({ key: sections.key }).from(sections),
+    db.select({ id: epics.id }).from(epics),
+  ]);
+  return { codeIds: new Set(c.map((r) => r.id)), sectionKeys: new Set(s.map((r) => r.key)), epicIds: new Set(e.map((r) => r.id)) };
 }
