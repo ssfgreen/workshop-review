@@ -1,0 +1,6 @@
+{
+  "//": "Vercel typechecks api/index.ts with the nearest tsconfig.json; without this file it falls back to the browser config at the root, which has no Node types.",
+  "extends": "../tsconfig.server.json",
+  "include": ["./**/*.ts", "../server/**/*.ts", "../shared/**/*.ts"],
+  "exclude": ["../**/*.test.ts", "../server/test"]
+}
