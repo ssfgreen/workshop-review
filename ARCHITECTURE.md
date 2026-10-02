@@ -25,7 +25,10 @@ proxying `/api`.
   only by `npm run db:seed` from a data bundle exported by the research repo. Read-only at runtime.
 - People's input (votes, notes, reactions, suggestions, display names): database tables, one
   row per person per target, written through the API.
-- Server data on the client: TanStack Query (via `preact/compat`); no fetch-into-state.
+- Server data on the client: TanStack Query (via `preact/compat`); no fetch-into-state. The
+  catalogue is fetched once; people's input comes from one `/api/activity` read, polled every
+  15 s and refetched after each write (writes show at once through optimistic updates). Polling
+  replaces the old artifact's realtime store; switch to server-sent events only if 15 s is too slow.
 - Navigation and filters that should survive a refresh (question, room, organise-by, kind,
   component, only-unvoted): the URL, through `preact-iso`.
 - Local UI state (open comment panel, drawer, dialog, typed drafts): the component that owns it.
@@ -59,7 +62,9 @@ type, editable later; votes and reactions are keyed by person id.
 
 ## 6. Verification
 
-`npm run check` (typecheck) and `npm test` (Vitest: pure logic, services against an in-memory
-database, route handlers through `app.request`) stay green on every commit. `npm run smoke --
+`npm run check` (typecheck of client, server and tests, each with its own tsconfig so browser code
+cannot use Node globals) and `npm test` (Vitest: pure logic, services against a temp-file
+database, route handlers through `app.request`, and every screen rendered to HTML from a seeded
+query cache) stay green on every commit. `npm run smoke --
 <url>` signs in to a deployment, loads the catalogue, writes and reads back a reaction, then
 removes it, and prints timings.
