@@ -40,6 +40,9 @@ proxying `/api`.
   Each code card carries small tabs (Q, A, C, …) showing where the code sits in every grouping;
   which tab is open is local state, starting on the view the card is shown in.
 - Local UI state (open comment panel, drawer, dialog, typed drafts): the component that owns it.
+  Which groups and which code cards are open on a question or structure page is the screen's
+  state, held as a default for all plus exceptions (`lib/disclosure.ts`), so "open all" and
+  "close all" are one state each and any heading can still be toggled on its own.
 
 ## 3. Module map
 

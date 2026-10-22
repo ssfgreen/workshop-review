@@ -1,8 +1,10 @@
 import { useEffect } from "preact/hooks";
 import { useRoute } from "preact-iso";
 import { CodeCard } from "../components/CodeCard.js";
+import { DisclosureButton, ViewControls } from "../components/Disclosure.js";
 import { SuggestForm } from "../components/SuggestForm.js";
 import { SuggestionCard } from "../components/SuggestionCard.js";
+import { useDisclosure } from "../hooks/useDisclosure.js";
 import { useFilters } from "../hooks/useFilters.js";
 import { useReview } from "../hooks/useReview.js";
 import { inRoom } from "../lib/filters.js";
@@ -15,6 +17,8 @@ export function QuestionScreen() {
   const { params } = useRoute();
   const { catalog, codes, activity, ix, me } = useReview();
   const [f] = useFilters();
+  const groupsOpen = useDisclosure();
+  const codesOpen = useDisclosure();
   const section = catalog.sections.find((s) => s.key === params.section);
 
   // Arriving from "Open in its question" (#code-ID): scroll the card into view and outline it.
@@ -49,17 +53,23 @@ export function QuestionScreen() {
           <ul class="columns">{section.columns.map((c) => <li key={c.column_key}>{/^[A-C]$/.test(c.column_key) ? `${c.column_key}: ` : ""}{c.column_label}</li>)}</ul>
         )}
         {f.room !== "all" && <p class="room-banner">Showing the codes that drew on {f.room}, with {f.room}'s evidence first. Choose "All rooms" in the bar above to see every code.</p>}
+        <ViewControls groups={groupsOpen} codes={codesOpen} />
       </section>
       {!anyInRoom && <p class="muted-note">No code in this question drew on {f.room}. Choose another room or "All rooms".</p>}
       {section.groups.map((g) => {
         const placed = codes.filter((c) => c.sectionKey === section.key && c.group === g.title && inRoom(c, f.room));
         if (!placed.length) return null;
         const cards = placed.filter((c) => visible(codeKey(c.id)));
+        const gid = `${section.key}:${g.title}`;
+        const open = groupsOpen.isOpen(gid);
         return (
           <section class="group" key={g.title}>
-            <h3>{g.title} <span class="n">{f.room === "all" ? `${g.codes.length} code${g.codes.length > 1 ? "s" : ""}` : `${placed.length} of ${g.codes.length} codes`}</span></h3>
-            {cards.length === 0 && <p class="muted-note">You've rated every code in this group.</p>}
-            {cards.map((c) => <CodeCard key={c.id} code={c} room={f.room} />)}
+            <h3>
+              <DisclosureButton open={open} onToggle={() => groupsOpen.toggle(gid)}>{g.title}</DisclosureButton>
+              <span class="n">{f.room === "all" ? `${g.codes.length} code${g.codes.length > 1 ? "s" : ""}` : `${placed.length} of ${g.codes.length} codes`}</span>
+            </h3>
+            {open && cards.length === 0 && <p class="muted-note">You've rated every code in this group.</p>}
+            {open && cards.map((c) => <CodeCard key={c.id} code={c} room={f.room} open={codesOpen.isOpen(c.id)} onToggle={() => codesOpen.toggle(c.id)} />)}
           </section>
         );
       })}

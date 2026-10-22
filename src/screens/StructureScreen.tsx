@@ -3,6 +3,8 @@ import { useRoute } from "preact-iso";
 import type { StructureGroup } from "../../shared/catalog.js";
 import { codeKey } from "../../shared/keys.js";
 import { CodeCard } from "../components/CodeCard.js";
+import { DisclosureButton, ViewControls } from "../components/Disclosure.js";
+import { useDisclosure } from "../hooks/useDisclosure.js";
 import { useFilters } from "../hooks/useFilters.js";
 import { useReview } from "../hooks/useReview.js";
 import type { PlacedCode } from "../lib/catalog.js";
@@ -19,6 +21,8 @@ export function StructureScreen() {
   const { params } = useRoute();
   const { catalog, codes, ix, me } = useReview();
   const [f, setF] = useFilters();
+  const groupsOpen = useDisclosure();
+  const codesOpen = useDisclosure();
   const structure = catalog.structures.find((s) => s.id === params.structure);
 
   // Arriving from a card's "See group" link (#code-ID): scroll the card into view and outline it.
@@ -61,6 +65,7 @@ export function StructureScreen() {
           ))}
         </div>
         {f.room !== "all" && <p class="room-banner">Showing the codes that drew on {f.room}, with {f.room}'s evidence first. Choose "All rooms" in the bar above to see every code.</p>}
+        <ViewControls groups={groupsOpen} codes={codesOpen} />
       </section>
       {total === 0 && <p class="muted-note">No code in this structure drew on {f.room}. Choose another room or "All rooms".</p>}
       {groups.map((g) => {
@@ -68,14 +73,18 @@ export function StructureScreen() {
         if (!placed.length) return null;
         const cards = placed.filter(visible);
         const gloss = groupGloss(g);
+        const open = groupsOpen.isOpen(g.id);
         let lastLabel: string | undefined;
         return (
           <section class="group" key={g.id} id={`group-${g.id}`}>
-            <h3>{g.id} · {g.title} <span class="n">{f.room === "all" ? `${g.codes.length} code${g.codes.length > 1 ? "s" : ""}` : `${placed.length} of ${g.codes.length} codes`}</span></h3>
+            <h3>
+              <DisclosureButton open={open} onToggle={() => groupsOpen.toggle(g.id)}>{g.id} · {g.title}</DisclosureButton>
+              <span class="n">{f.room === "all" ? `${g.codes.length} code${g.codes.length > 1 ? "s" : ""}` : `${placed.length} of ${g.codes.length} codes`}</span>
+            </h3>
             {gloss && <p class="prompt gloss">{gloss}</p>}
-            {g.note && <details class="def group-note"><summary>Notes on this group</summary><p>{g.note}</p></details>}
-            {cards.length === 0 && <p class="muted-note">You've rated every code in this group.</p>}
-            {cards.map((c) => {
+            {open && g.note && <details class="def group-note"><summary>Notes on this group</summary><p>{g.note}</p></details>}
+            {open && cards.length === 0 && <p class="muted-note">You've rated every code in this group.</p>}
+            {open && cards.map((c) => {
               const label = g.sublabels[c.id];
               const heading = label && label !== lastLabel ? <h4 class="sublabel">{label}</h4> : null;
               lastLabel = label ?? lastLabel;
@@ -83,7 +92,7 @@ export function StructureScreen() {
                 <div key={c.id} class="placed">
                   {heading}
                   {g.remarks[c.id] && <p class="muted-note remark">{g.remarks[c.id]}</p>}
-                  <CodeCard code={c} room={f.room} structure={structure.id} />
+                  <CodeCard code={c} room={f.room} structure={structure.id} open={codesOpen.isOpen(c.id)} onToggle={() => codesOpen.toggle(c.id)} />
                 </div>
               );
             })}

@@ -60,7 +60,7 @@ describe("screens render (fixture)", () => {
   it("room filter keeps only codes with that room's evidence", () => {
     const html = render("/q/q1_grounding?room=Room%203", cat);
     expect(html).toContain("No code in this question drew on Room 3");
-    expect(html).not.toContain("Know the class</h4>");
+    expect(html).not.toContain("Know the class</button></h4>");
   });
 
   it("stories screen opens by epic, with the question view one click away", () => {
@@ -92,19 +92,30 @@ describe("screens render (fixture)", () => {
     expect(all).toContain("A. The teacher's terms");
     expect(all).toContain("A1 · Tell it what it needs");
     expect(all).toContain("A8 · Make checking cheap");
-    expect(all).toContain("Know the class</h4>");
-    expect(all).toContain("Check quickly</h4>");
+    expect(all).toContain("Know the class</button></h4>");
+    expect(all).toContain("Check quickly</button></h4>");
     expect(all).toContain("A8 is the checking cluster."); // the structure's notes, shown with every group
     expect(all).toContain('aria-current="page"'); // the Structures tab in the bar, and the A pill
     const one = render("/s/A?g=A8", cat);
-    expect(one).toContain("Check quickly</h4>");
-    expect(one).not.toContain("Know the class</h4>");
+    expect(one).toContain("Check quickly</button></h4>");
+    expect(one).not.toContain("Know the class</button></h4>");
     expect(one).not.toContain("A8 is the checking cluster.");
     const build = render("/s/E", cat);
     expect(build).toContain("T2"); // the tier gloss
     expect(build).toContain('class="sublabel">Metrics'); // a sub-heading within a group
     expect(build).toContain("Build notes: a class profile schema.");
     expect(render("/s/Z", cat)).toContain("No structure with that letter");
+  });
+
+  it("groups and cards are disclosures, open by default, with open-all and close-all for each level", () => {
+    for (const url of ["/q/q1_grounding", "/s/A"]) {
+      const html = render(url, cat);
+      expect(html).toContain('aria-label="Open and close"');
+      expect(html).toMatch(/<h3><button type="button" aria-expanded="true" class="disclosure"/); // a group heading
+      expect(html).toMatch(/<h4 class="code-title"><button type="button" aria-expanded="true" class="disclosure"/); // a card
+      expect((html.match(/aria-pressed="true"[^>]*>Open all</g) ?? []).length).toBe(2); // groups and codes both all open
+      expect(html).toContain("Close all");
+    }
   });
 
   it("results screen counts thumbs per code and suggestion", () => {

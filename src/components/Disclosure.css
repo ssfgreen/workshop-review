@@ -1,0 +1,8 @@
+.view-controls { gap: 6px 16px; }
+.view-pair { display: inline-flex; align-items: center; gap: 6px; }
+.view-pair .lbl { min-width: 0; }
+
+.disclosure { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.disclosure:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.chev { flex: none; width: 0.55em; height: 0.55em; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform 120ms; margin-right: 2px; }
+.disclosure[aria-expanded="true"] .chev { transform: rotate(45deg); }

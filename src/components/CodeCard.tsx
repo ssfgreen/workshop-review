@@ -5,6 +5,7 @@ import { useReview } from "../hooks/useReview.js";
 import type { PlacedCode } from "../lib/catalog.js";
 import { shortSection } from "../lib/labels.js";
 import { myThumb } from "../lib/tally.js";
+import { DisclosureButton } from "./Disclosure.js";
 import { EvidenceItem } from "./Evidence.js";
 import { ReactBar } from "./ReactBar.js";
 import { StoryLine } from "./StoryLine.js";
@@ -16,10 +17,13 @@ interface Props {
   room?: Room | "all";
   /** The structure the card is shown under ("A", "C", …); its tab opens first. Default: the question. */
   structure?: string;
+  /** Closed shows only the title line and thumbs. Without onToggle the card is always open. */
+  open?: boolean;
+  onToggle?: () => void;
 }
 
 /** A code with its evidence, user stories and reactions. With a room chosen, that room's evidence leads. */
-export function CodeCard({ code: c, room = "all", structure = "Q" }: Props) {
+export function CodeCard({ code: c, room = "all", structure = "Q", open = true, onToggle }: Props) {
   const { ix, me } = useReview();
   const [showRest, setShowRest] = useState(false);
   const filtered = room !== "all";
@@ -30,14 +34,15 @@ export function CodeCard({ code: c, room = "all", structure = "Q" }: Props) {
   const thumb = myThumb(ix, codeKey(c.id), me);
 
   return (
-    <article class={`card${thumb ? ` rated-${thumb}` : ""}`} id={`code-${c.id}`}>
+    <article class={`card${thumb ? ` rated-${thumb}` : ""}${open ? "" : " closed"}`} id={`code-${c.id}`}>
       <div class="card-top">
         <div class="title-block">
-          <h4 class="code-title">{c.title}</h4>
+          <h4 class="code-title">{onToggle ? <DisclosureButton open={open} onToggle={onToggle}>{c.title}</DisclosureButton> : c.title}</h4>
           <span class="mono">{c.id}</span>
         </div>
         <ReactBar target={codeKey(c.id)} what="code" />
       </div>
+      {open && <>
       <p class="gist">{c.gist}</p>
       <div class="meta">
         {filtered && <span class="chip room">{room}: {first.length} of {c.evidence.length} pieces, from {roomPeople.join(", ")}</span>}
@@ -62,6 +67,7 @@ export function CodeCard({ code: c, room = "all", structure = "Q" }: Props) {
         </details>
       )}
       <StructureTabs code={c} active={structure} />
+      </>}
     </article>
   );
 }
