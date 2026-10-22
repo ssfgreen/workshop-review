@@ -1,7 +1,8 @@
-import type { Activity, Reaction, ReactionValue } from "../../shared/activity.js";
+import { RANK_DIMENSIONS, RANK_OPTIONS, type Activity, type RankDimension, type Ranking, type Reaction, type ReactionValue } from "../../shared/activity.js";
 
 export interface Indexed {
   reactionsByTarget: Map<string, Reaction[]>;
+  rankingsByTarget: Map<string, Ranking[]>;
   names: Map<string, string>;
 }
 
@@ -9,7 +10,30 @@ export interface Indexed {
 export function indexActivity(a: Activity): Indexed {
   const reactionsByTarget = new Map<string, Reaction[]>();
   for (const r of a.reactions) (reactionsByTarget.get(r.target) ?? reactionsByTarget.set(r.target, []).get(r.target)!).push(r);
-  return { reactionsByTarget, names: new Map(a.people.map((p) => [p.id, p.name])) };
+  const rankingsByTarget = new Map<string, Ranking[]>();
+  for (const r of a.rankings ?? []) (rankingsByTarget.get(r.target) ?? rankingsByTarget.set(r.target, []).get(r.target)!).push(r);
+  return { reactionsByTarget, rankingsByTarget, names: new Map(a.people.map((p) => [p.id, p.name])) };
+}
+
+export interface RankingSummary {
+  /** How many people chose each value, per scale, in option order. */
+  counts: Record<RankDimension, Record<string, number>>;
+  /** My own choice per scale, or null. */
+  mine: Record<RankDimension, string | null>;
+  /** People who have chosen anything on this story. */
+  raters: number;
+}
+
+export function rankingSummary(ix: Indexed, target: string, me: string): RankingSummary {
+  const list = ix.rankingsByTarget.get(target) ?? [];
+  const my = list.find((r) => r.personId === me);
+  const counts = {} as RankingSummary["counts"];
+  const mine = {} as RankingSummary["mine"];
+  for (const dim of RANK_DIMENSIONS) {
+    counts[dim] = Object.fromEntries(RANK_OPTIONS[dim].map((v) => [v, list.filter((r) => r[dim] === v).length]));
+    mine[dim] = my?.[dim] ?? null;
+  }
+  return { counts, mine, raters: list.length };
 }
 
 export interface NamedNote {

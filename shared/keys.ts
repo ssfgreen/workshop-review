@@ -14,6 +14,9 @@ const SUGGESTION_ID = /^[A-Za-z0-9_-]{6,40}$/;
 // Turn ids are PL/R1/R2/R3-nnnn, chat messages CH-nnn, sticky notes note:<uuid>.
 const REF = /^(?:[A-Z][A-Z0-9]-\d{4}|CH-\d{3}|note:[0-9a-f-]{36})$/;
 
+/** True for a story key (`story:CODE:n`), the only thing that can be ranked. */
+export const isStoryKey = (key: string) => key.startsWith("story:") && isReactionTarget(key);
+
 /** True for any reaction target the catalogue or a suggestion could have (format only, not existence). */
 export function isReactionTarget(key: string): boolean {
   const [kind, ...rest] = key.split(":");

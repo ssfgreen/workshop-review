@@ -1,0 +1,9 @@
+.rank { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 0.76rem; }
+.rank-dim { display: inline-flex; align-items: center; gap: 2px; }
+.rank-lbl { color: var(--muted); margin-right: 4px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.rk { display: inline-flex; align-items: center; gap: 3px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 1px 7px; cursor: pointer; line-height: 1.4; font-size: 0.76rem; }
+.rk:hover { border-color: var(--accent); color: var(--ink); }
+.rk .c { font-family: var(--mono); font-size: 0.68rem; font-variant-numeric: tabular-nums; }
+.rk[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.rk.priority-high[aria-pressed="true"] { background: var(--drop); border-color: var(--drop); }
+.rk.priority-low[aria-pressed="true"] { background: var(--keep); border-color: var(--keep); }

@@ -83,6 +83,21 @@ export const reactions = sqliteTable(
   (t) => [primaryKey({ columns: [t.personId, t.target] })],
 );
 
+// How a person ranks a user story: priority, the kind of work it needs, and its size. One row per
+// person per story; a scale not yet chosen is null; a row with nothing chosen is deleted.
+export const rankings = sqliteTable(
+  "rankings",
+  {
+    personId: text("person_id").notNull(),
+    target: text("target").notNull(),
+    priority: text("priority"),
+    work: text("work"),
+    size: text("size"),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.personId, t.target] })],
+);
+
 export const suggestions = sqliteTable(
   "suggestions",
   {

@@ -21,6 +21,10 @@ const activity: Activity = {
     { personId: "b", target: "code:KNOW_THE_CLASS", value: "up", note: "Strong" },
     { personId: "me", target: "code:KNOW_THE_CLASS", value: "down", note: null },
   ],
+  rankings: [
+    { personId: "b", target: "story:CHECK_QUICKLY:0", priority: "high", work: "software", size: "small" },
+    { personId: "me", target: "story:CHECK_QUICKLY:0", priority: "high", work: null, size: "medium" },
+  ],
   suggestions: [{ id: "abc123def456", section: "q1_grounding", group: "Knowing the class", title: "A suggested code", description: "It means this.", evidence: "", authorId: "me", created: "2026-10-02T10:00:00Z" }],
 };
 
@@ -123,6 +127,18 @@ describe("screens render (fixture)", () => {
     expect(html).toContain("2 people have rated codes so far");
     expect(html).toContain("Suggested · Knowing the class");
     expect(html).toContain("<th>Up</th><th>Down</th>");
+  });
+
+  it("every story can be ranked on priority, needs and size, with colleagues' counts and my choice", () => {
+    const html = render("/stories", cat);
+    expect(html).toContain('aria-label="Rank this story"');
+    expect(html).toContain('type="button" aria-pressed="true" title="2 people" class="rk priority-high"'); // my choice, with the count
+    expect(html).toContain('type="button" aria-pressed="false" title="1 person" class="rk work-software"');
+    expect(html).toContain('type="button" aria-pressed="false" title="0 people" class="rk size-large"');
+    const results = render("/results", cat);
+    expect(results).toContain("2 people have ranked stories so far");
+    expect(results).toContain("output I can check at a glance");
+    expect(results).toContain('<td class="num">2 · 0 · 0</td><td class="num">0 · 1 · 0</td><td class="num">0 · 1 · 1</td><td class="num">2</td>');
   });
 });
 

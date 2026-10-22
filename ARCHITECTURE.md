@@ -28,8 +28,10 @@ proxying `/api`.
   build layers, kind of claim) are one JSON value in `meta`, not tables: a few KB of reading aid
   over code ids that nothing reacts to or queries by row. The seed refuses a structure that does
   not place every code exactly once.
-- People's input (a thumb and comment per person per target, suggested codes, display names):
-  database tables, written through the API.
+- People's input (a thumb and comment per person per target, a ranking per person per user story
+  on three scales (priority, kind of work needed, size), suggested codes, display names):
+  database tables, written through the API. A ranking write is a patch of the scales it names, so
+  one click never clears another scale; a row with nothing chosen is deleted.
 - Server data on the client: TanStack Query (via `preact/compat`); no fetch-into-state. The
   catalogue is fetched once; people's input comes from one `/api/activity` read, polled every
   15 s and refetched after each write (writes show at once through optimistic updates). Polling

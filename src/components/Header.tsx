@@ -22,6 +22,7 @@ export function Header() {
         <div><b>Rate</b>Thumbs up or down on any code, piece of evidence, user story or epic. Click again to take it back. Everyone sees the totals.</div>
         <div><b>Comment</b>The speech-bubble icon adds a short comment: say why, or suggest a better name or a merge with another code.</div>
         <div><b>Suggest a code</b>Use the form at the end of each question. Colleagues can rate and comment on it too.</div>
+        <div><b>Rank stories</b>Under each user story, pick a priority (high, medium, low), what it would mainly take (research, software, AI) and its size (large, medium, small). Click again to clear. The counts show colleagues' choices; the Results tab totals them.</div>
         <div><b>Structures</b>The Structures tab shows the same codes grouped another way (the teacher's terms, theory, a build plan, kind of claim), and can be narrowed to one group. The small tabs at the foot of each card show where it sits in each.</div>
       </div>
       <p class="muted-note">Participants: P04, P06 and P07 also took part in the earlier interviews; W01 to W09 were new. Facilitators are not quoted. Sticky notes marked "typed by facilitator" were written down by a facilitator for that participant.</p>

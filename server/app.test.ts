@@ -76,6 +76,20 @@ describe("reactions and suggestions", () => {
     expect((await call("/votes/KNOW_THE_CLASS", { method: "PUT", cookie, body: "{}" })).status).toBe(404); // votes are gone
   });
 
+  it("ranks a user story on each scale, and refuses anything that is not a story", async () => {
+    const { call, signIn } = await setup();
+    const { cookie, person } = await signIn();
+    const put = (target: string, body: unknown) => call(`/rankings/${encodeURIComponent(target)}`, { method: "PUT", cookie, body: JSON.stringify(body) });
+    expect((await put("story:CHECK_QUICKLY:1", { priority: "high", work: "software" })).status).toBe(204);
+    expect((await put("story:CHECK_QUICKLY:1", { size: "medium" })).status).toBe(204);
+    const act = await (await call("/activity", { cookie })).json() as { rankings: unknown[] };
+    expect(act.rankings).toEqual([{ personId: person.id, target: "story:CHECK_QUICKLY:1", priority: "high", work: "software", size: "medium" }]);
+    expect((await put("story:CHECK_QUICKLY:1", { priority: "urgent" })).status).toBe(400);
+    expect((await put("code:CHECK_QUICKLY", { priority: "high" })).status).toBe(400);
+    expect((await put("story:NOT_A_CODE:0", { priority: "high" })).status).toBe(404);
+    expect((await call(`/rankings/${encodeURIComponent("story:CHECK_QUICKLY:1")}`, { method: "PUT", body: "{}" })).status).toBe(401);
+  });
+
   it("lets anyone react to a suggestion but only its author remove it", async () => {
     const { call, signIn } = await setup();
     const a = await signIn("A"), b = await signIn("B");

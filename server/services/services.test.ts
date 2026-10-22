@@ -6,6 +6,7 @@ import { fixtureCatalog } from "../test/fixture.js";
 import { getActivity } from "./activity.js";
 import { getCatalog, getCatalogIds, seedCatalog } from "./catalog.js";
 import { createPerson, renamePerson } from "./people.js";
+import { cleanRankingPatch, setRanking } from "./rankings.js";
 import { setReaction } from "./responses.js";
 import { addSuggestion, removeSuggestion } from "./suggestions.js";
 
@@ -55,6 +56,27 @@ describe("reactions", () => {
     await setReaction(db, a.id, "code:CHECK_QUICKLY", "up", null);
     await setReaction(db, b.id, "code:CHECK_QUICKLY", "down", "Merge it");
     expect((await getActivity(db)).reactions.map((r) => r.value).sort()).toEqual(["down", "up"]);
+  });
+});
+
+describe("rankings", () => {
+  it("patches one scale at a time, keeps the others, and deletes a row with nothing chosen", async () => {
+    const db = await fresh();
+    const p = await createPerson(db, "Alex");
+    await setRanking(db, p.id, "story:CHECK_QUICKLY:0", { priority: "high" });
+    await setRanking(db, p.id, "story:CHECK_QUICKLY:0", { size: "small" });
+    expect((await getActivity(db)).rankings).toEqual([{ personId: p.id, target: "story:CHECK_QUICKLY:0", priority: "high", work: null, size: "small" }]);
+    await setRanking(db, p.id, "story:CHECK_QUICKLY:0", { priority: null, work: "ai" });
+    expect((await getActivity(db)).rankings[0]).toMatchObject({ priority: null, work: "ai", size: "small" });
+    await setRanking(db, p.id, "story:CHECK_QUICKLY:0", { work: null, size: null });
+    expect((await getActivity(db)).rankings).toEqual([]);
+  });
+
+  it("cleans a patch: known scales and values only, null to clear, unknown fields ignored", () => {
+    expect(cleanRankingPatch({ priority: "high", size: null, other: "x" })).toEqual({ priority: "high", size: null });
+    expect(cleanRankingPatch({ work: "magic" })).toBe("work");
+    expect(cleanRankingPatch({ priority: 3 })).toBe("priority");
+    expect(cleanRankingPatch(undefined)).toEqual({});
   });
 });
 

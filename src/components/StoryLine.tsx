@@ -3,6 +3,7 @@ import { storyKey } from "../../shared/keys.js";
 import { useReview } from "../hooks/useReview.js";
 import { COMP_LABEL, KIND_LABEL, sectionName } from "../lib/labels.js";
 import type { PlacedCode } from "../lib/catalog.js";
+import { RankBar } from "./RankBar.js";
 import { ReactBar } from "./ReactBar.js";
 import "./StoryLine.css";
 
@@ -33,6 +34,7 @@ export function StoryLine({ story: s, code, index, showSource, onPeek, extra }: 
           ))}
           <ReactBar target={storyKey(code.id, index)} what="story" />
         </span>
+        <RankBar target={storyKey(code.id, index)} />
         {showSource && (
           <span class="story-source">
             From: {onPeek ? <button class="peek" type="button" onClick={() => onPeek(code.id)}>{code.title}</button> : code.title}

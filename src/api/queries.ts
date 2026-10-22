@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Activity, ReactionValue, Session, Suggestion } from "../../shared/activity.js";
+import type { Activity, RankingPatch, ReactionValue, Session, Suggestion } from "../../shared/activity.js";
 import type { Catalog } from "../../shared/catalog.js";
 import { api, ApiError, send } from "./client.js";
 
@@ -52,6 +52,30 @@ export function useReact() {
         const rest = prev.reactions.filter((x) => !(x.personId === me && x.target === r.target));
         const next = r.value || r.note ? [...rest, { personId: me, target: r.target, value: r.value, note: r.note }] : rest;
         qc.setQueryData<Activity>(ACTIVITY, { ...prev, reactions: next });
+      }
+      return { prev };
+    },
+    onError: (_e, _r, ctx) => { if (ctx?.prev) qc.setQueryData(ACTIVITY, ctx.prev); },
+    onSettled: () => qc.invalidateQueries({ queryKey: ACTIVITY }),
+  });
+}
+
+/** Set one or more of my scales on a story (null clears one); shown at once, then confirmed by the poll. */
+export function useRank() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (r: { target: string; patch: RankingPatch }) =>
+      api<void>(`/rankings/${encodeURIComponent(r.target)}`, send("PUT", r.patch)),
+    onMutate: async (r) => {
+      await qc.cancelQueries({ queryKey: ACTIVITY });
+      const me = qc.getQueryData<Session>(["session"])?.id;
+      const prev = qc.getQueryData<Activity>(ACTIVITY);
+      if (prev && me) {
+        const mine = prev.rankings.find((x) => x.personId === me && x.target === r.target);
+        const merged = { personId: me, target: r.target, priority: null, work: null, size: null, ...mine, ...r.patch };
+        const rest = prev.rankings.filter((x) => !(x.personId === me && x.target === r.target));
+        const next = merged.priority || merged.work || merged.size ? [...rest, merged] : rest;
+        qc.setQueryData<Activity>(ACTIVITY, { ...prev, rankings: next });
       }
       return { prev };
     },

@@ -40,7 +40,7 @@ export function StoriesScreen() {
     <main class="wrap">
       <section class="section-head">
         <h2>User stories for the tool</h2>
-        <p class="prompt">Draft stories a differentiation tool could be built against, one to three per code. Features are things the tool does, settings are things a teacher or school configures, and guardrails are things it must avoid or check. Each story is tagged with the parts of the system that would carry it (the shaded tag is the main one) and with its epic. Click a code's name to see it with its evidence.</p>
+        <p class="prompt">Draft stories a differentiation tool could be built against, one to three per code. Features are things the tool does, settings are things a teacher or school configures, and guardrails are things it must avoid or check. Each story is tagged with the parts of the system that would carry it (the shaded tag is the main one) and with its epic. Rank each one by priority, what it would mainly take to build, and size; the numbers show how many colleagues chose each. Click a code's name to see it with its evidence.</p>
         <ul class="comp-key">{COMPS.map((k) => <li key={k}><span class="comp-chip main">{COMP_LABEL[k]}</span> {catalog.component_definitions[k] ?? ""}</li>)}</ul>
         {row("Organise by", [["epic", "Epic"], ["question", "Question"]], f.org, (k) => setF({ org: k as "question" | "epic" }))}
         {row("Kind", [["all", `All (${all.length})`], ...KINDS.map((k) => [k, `${KIND_LABEL[k]}s (${count((s) => s.kind === k)})`] as [string, string])], f.kind, (k) => setF({ kind: k as StoryKind | "all" }))}

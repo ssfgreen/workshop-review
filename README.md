@@ -3,8 +3,9 @@
 A small web app for a research team to review the draft codes from the ELM differentiation
 workshop (1 October 2026): rate codes, evidence, user stories, epics and suggested codes with a
 thumbs up or down and a short comment, suggest new codes, browse the user stories by epic or
-question, and read the codes by any of the thematic structures (the teacher's terms, theory,
-build layers, kind of claim), narrowed to one group if wanted. Decisions and structure: [ARCHITECTURE.md](ARCHITECTURE.md).
+question, rank each user story by priority, the kind of work it needs and its size, and read the
+codes by any of the thematic structures (the teacher's terms, theory, build layers, kind of
+claim), narrowed to one group if wanted. Decisions and structure: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 The research data is not in this repository. The research repo exports it as a bundle, and the
 seed script loads it into the database.
@@ -42,7 +43,9 @@ python 90_pipeline/scripts/build_workshop_vote_page.py --bundle-out <this repo>/
 ```
 
 Then `npm run db:seed` here (locally, or with the production `DATABASE_URL`). Seeding replaces the
-codes, evidence, stories and epics and keeps everyone's ratings, comments and suggestions. Reactions
+codes, evidence, stories and epics and keeps everyone's ratings, rankings, comments and suggestions.
+When a release adds a migration (a new file in `server/db/migrations/`), run `npm run db:migrate`
+against the production database before deploying it. Reactions
 on stories are keyed by position: add new stories at the end of a code's list.
 
 ## Deploy (Vercel + Turso)
