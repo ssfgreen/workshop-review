@@ -8,6 +8,7 @@ import { QuestionScreen } from "./screens/QuestionScreen.js";
 import { ResultsScreen } from "./screens/ResultsScreen.js";
 import { SignInScreen } from "./screens/SignInScreen.js";
 import { StoriesScreen } from "./screens/StoriesScreen.js";
+import { StructureScreen } from "./screens/StructureScreen.js";
 
 function GoToFirstQuestion() {
   const { route } = useLocation();
@@ -31,11 +32,12 @@ export function Shell() {
       <TopBar />
       <Router>
         <Route path="/q/:section" component={QuestionScreen} />
+        <Route path="/s/:structure" component={StructureScreen} />
         <Route path="/stories" component={StoriesScreen} />
         <Route path="/results" component={ResultsScreen} />
         <Route default component={GoToFirstQuestion} />
       </Router>
-      <footer class="wrap muted-note footer">Draft codes from one coding pass (generated {catalog.data.generated}). Groups are a reading aid, not part of the codebook. Evidence uses participant IDs only.</footer>
+      <footer class="wrap muted-note footer">Draft codes from one coding pass (generated {catalog.data.generated}). Groups and structures are reading aids, not part of the codebook. Evidence uses participant IDs only.</footer>
     </>
   );
 }

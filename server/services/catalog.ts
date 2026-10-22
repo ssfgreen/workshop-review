@@ -32,9 +32,12 @@ export async function seedCatalog(db: Db, bundle: Catalog): Promise<{ codes: num
     if (bundle.epics.length) {
       await tx.insert(epics).values(bundle.epics.map((e, i) => ({ id: e.id, position: i, title: e.title, description: e.description })));
     }
+    // The thematic structures are a few KB of reading aid over the code ids, so they live as one
+    // JSON value rather than their own tables; nothing reacts to or queries them by row.
     await tx.insert(meta).values([
       { key: "generated", value: bundle.generated },
       { key: "component_definitions", value: JSON.stringify(bundle.component_definitions ?? {}) },
+      { key: "structures", value: JSON.stringify(bundle.structures ?? []) },
     ]);
   });
   return { codes: nCodes, evidence: nEvidence, stories: nStories };
@@ -74,6 +77,7 @@ export async function getCatalog(db: Db): Promise<Catalog> {
     sections: out,
     epics: epRows.map((e) => ({ id: e.id, title: e.title, description: e.description })),
     component_definitions: m.component_definitions ? JSON.parse(m.component_definitions) : {},
+    structures: m.structures ? JSON.parse(m.structures) : [],
   };
 }
 

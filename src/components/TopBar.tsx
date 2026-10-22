@@ -17,11 +17,12 @@ export function TopBar() {
   const rated = (id: string) => myThumb(ix, codeKey(id), me) !== null;
   const done = shown.filter((c) => rated(c.id)).length;
 
-  const tab = (href: string, label: string, count?: string) => (
-    <a class="pill tab" href={link(href)} aria-current={path === href ? "page" : undefined}>
+  const tab = (href: string, label: string, count?: string, current = path === href) => (
+    <a class="pill tab" href={link(href)} aria-current={current ? "page" : undefined}>
       {label}{count && <span class="n">{count}</span>}
     </a>
   );
+  const firstStructure = catalog.structures[0];
 
   return (
     <nav class="bar" aria-label="Questions">
@@ -31,6 +32,7 @@ export function TopBar() {
             const inSec = shown.filter((c) => c.sectionKey === s.key);
             return tab(`/q/${s.key}`, s.label, `${inSec.filter((c) => rated(c.id)).length}/${inSec.length}`);
           })}
+          {firstStructure && tab(`/s/${firstStructure.id}`, "Structures", undefined, path.startsWith("/s/"))}
           {tab("/stories", "User stories")}
           {tab("/results", "Results")}
         </div>

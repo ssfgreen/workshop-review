@@ -9,10 +9,13 @@ export interface Filters {
   org: "epic" | "question";
   kind: StoryKind | "all";
   comp: Component | "all";
+  /** On a structure page: one of its groups (e.g. "A4"), or every group. */
+  group: string;
 }
 
 const KINDS: StoryKind[] = ["feature", "setting", "guardrail"];
 const COMPS: Component[] = ["data", "skill", "tool", "deployment"];
+const GROUP_ID = /^[A-Z]\d{1,2}$/;
 
 export function parseFilters(query: Record<string, string | undefined>): Filters {
   const room = query.room as Room;
@@ -22,6 +25,7 @@ export function parseFilters(query: Record<string, string | undefined>): Filters
     org: query.org === "question" ? "question" : "epic",
     kind: KINDS.includes(query.kind as StoryKind) ? (query.kind as StoryKind) : "all",
     comp: COMPS.includes(query.comp as Component) ? (query.comp as Component) : "all",
+    group: query.g && GROUP_ID.test(query.g) ? query.g : "all",
   };
 }
 
@@ -33,6 +37,7 @@ export function filtersToQuery(f: Filters): string {
   if (f.org !== "epic") q.set("org", f.org);
   if (f.kind !== "all") q.set("kind", f.kind);
   if (f.comp !== "all") q.set("comp", f.comp);
+  if (f.group !== "all") q.set("g", f.group);
   const s = q.toString();
   return s ? `?${s}` : "";
 }

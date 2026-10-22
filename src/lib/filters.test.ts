@@ -3,11 +3,11 @@ import { filtersToQuery, parseFilters } from "./filters.js";
 
 describe("URL filters", () => {
   it("defaults anything missing or invalid; stories open by epic", () => {
-    expect(parseFilters({ room: "Room 9", kind: "bogus" })).toEqual({ room: "all", unrated: false, org: "epic", kind: "all", comp: "all" });
+    expect(parseFilters({ room: "Room 9", kind: "bogus", g: "group-a" })).toEqual({ room: "all", unrated: false, org: "epic", kind: "all", comp: "all", group: "all" });
   });
 
   it("round-trips through the query string", () => {
-    const f = parseFilters({ room: "Room 2", unrated: "1", org: "question", kind: "guardrail", comp: "tool" });
+    const f = parseFilters({ room: "Room 2", unrated: "1", org: "question", kind: "guardrail", comp: "tool", g: "A4" });
     const q = Object.fromEntries(new URLSearchParams(filtersToQuery(f).slice(1)));
     expect(parseFilters(q)).toEqual(f);
   });

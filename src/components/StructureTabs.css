@@ -1,0 +1,8 @@
+.stabs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 0.8rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.stabs-row { display: inline-flex; gap: 2px; }
+.stab { font-family: var(--mono); font-size: 0.72rem; line-height: 1; padding: 4px 7px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; border-radius: 6px; }
+.stab[aria-selected="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); font-weight: 700; }
+.stabs-panel { display: inline-flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; min-width: 0; }
+.stabs-panel .where { color: var(--ink); font-weight: 600; }
+.stabs-panel .gloss::before { content: "("; } .stabs-panel .gloss::after { content: ")"; }
+.stabs-panel .go { color: var(--accent); font-size: 0.78rem; }

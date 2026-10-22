@@ -8,10 +8,18 @@ import { myThumb } from "../lib/tally.js";
 import { EvidenceItem } from "./Evidence.js";
 import { ReactBar } from "./ReactBar.js";
 import { StoryLine } from "./StoryLine.js";
+import { StructureTabs } from "./StructureTabs.js";
 import "./CodeCard.css";
 
+interface Props {
+  code: PlacedCode;
+  room?: Room | "all";
+  /** The structure the card is shown under ("A", "C", …); its tab opens first. Default: the question. */
+  structure?: string;
+}
+
 /** A code with its evidence, user stories and reactions. With a room chosen, that room's evidence leads. */
-export function CodeCard({ code: c, room = "all" }: { code: PlacedCode; room?: Room | "all" }) {
+export function CodeCard({ code: c, room = "all", structure = "Q" }: Props) {
   const { ix, me } = useReview();
   const [showRest, setShowRest] = useState(false);
   const filtered = room !== "all";
@@ -53,6 +61,7 @@ export function CodeCard({ code: c, room = "all" }: { code: PlacedCode; room?: R
           <ul class="story-list">{c.stories.map((s, i) => <StoryLine key={i} story={s} code={c} index={i} />)}</ul>
         </details>
       )}
+      <StructureTabs code={c} active={structure} />
     </article>
   );
 }

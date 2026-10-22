@@ -9,6 +9,21 @@ export function fixtureCatalog(): Catalog {
       { id: "adapt", title: "Adapt my resource", description: "The core job." },
       { id: "review", title: "Review and approve", description: "Checking." },
     ],
+    structures: [
+      {
+        id: "A", title: "The teacher's terms", purpose: "practical: reporting back", intro: "Reads the workshop as a set of terms.", notes: "A8 is the checking cluster.",
+        groups: [
+          { id: "A1", title: "Tell it what it needs", annotation: "context only the teacher can supply", tier: "", action: "", note: "", codes: ["KNOW_THE_CLASS"], sublabels: {}, remarks: {} },
+          { id: "A8", title: "Make checking cheap", annotation: "the economics of trust", tier: "", action: "", note: "", codes: ["CHECK_QUICKLY"], sublabels: {}, remarks: {} },
+        ],
+      },
+      {
+        id: "E", title: "Build structure", purpose: "layers, with buildability tiers", intro: "Groups codes by layer.", notes: "",
+        groups: [
+          { id: "E1", title: "Context store", annotation: "", tier: "T2", action: "", note: "Build notes: a class profile schema.", codes: ["KNOW_THE_CLASS", "CHECK_QUICKLY"], sublabels: { CHECK_QUICKLY: "Metrics" }, remarks: { KNOW_THE_CLASS: "schema" } },
+        ],
+      },
+    ],
     sections: [
       {
         key: "q1_grounding", label: "Grounding", question: "What should it know?", prompt: "Before an agent helps…",

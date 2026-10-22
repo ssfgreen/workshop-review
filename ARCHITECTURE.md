@@ -24,14 +24,21 @@ proxying `/api`.
 
 - Catalogue (sections, groups, codes, evidence, user stories, epics): database tables, written
   only by `npm run db:seed` from a data bundle exported by the research repo. Read-only at runtime.
+  The thematic structures (alternative groupings of every code: the teacher's terms, theory,
+  build layers, kind of claim) are one JSON value in `meta`, not tables: a few KB of reading aid
+  over code ids that nothing reacts to or queries by row. The seed refuses a structure that does
+  not place every code exactly once.
 - People's input (a thumb and comment per person per target, suggested codes, display names):
   database tables, written through the API.
 - Server data on the client: TanStack Query (via `preact/compat`); no fetch-into-state. The
   catalogue is fetched once; people's input comes from one `/api/activity` read, polled every
   15 s and refetched after each write (writes show at once through optimistic updates). Polling
   replaces the old artifact's realtime store; switch to server-sent events only if 15 s is too slow.
-- Navigation and filters that should survive a refresh (question, room, organise-by with epic as
-  the default, kind, component, only-unrated): the URL, through `preact-iso`.
+- Navigation and filters that should survive a refresh (question, structure, room, organise-by
+  with epic as the default, kind, component, structure group, only-unrated): the URL, through
+  `preact-iso`. `/s/:structure` shows the codes by one structure; `?g=A4` narrows it to a group.
+  Each code card carries small tabs (Q, A, C, …) showing where the code sits in every grouping;
+  which tab is open is local state, starting on the view the card is shown in.
 - Local UI state (open comment panel, drawer, dialog, typed drafts): the component that owns it.
 
 ## 3. Module map

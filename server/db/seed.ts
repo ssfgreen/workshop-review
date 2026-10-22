@@ -16,6 +16,15 @@ export function checkBundle(value: unknown): Catalog {
       if (!c.id || !Array.isArray(c.evidence) || !Array.isArray(c.stories)) throw new Error(`Code ${c.id ?? "?"} is incomplete.`);
     }
   }
+  // Bundles exported before the thematic structures existed have none.
+  b.structures ??= [];
+  const ids = new Set(b.sections.flatMap((s) => s.groups.flatMap((g) => g.codes.map((c) => c.id))));
+  for (const st of b.structures) {
+    const placed = st.groups.flatMap((g) => g.codes);
+    if (placed.length !== ids.size || new Set(placed).size !== placed.length || placed.some((c) => !ids.has(c))) {
+      throw new Error(`Structure ${st.id} does not place every code exactly once.`);
+    }
+  }
   return b;
 }
 

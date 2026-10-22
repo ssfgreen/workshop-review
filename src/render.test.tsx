@@ -75,6 +75,38 @@ describe("screens render (fixture)", () => {
     expect(byQuestion).not.toContain("From: ");
   });
 
+  it("every card carries small tabs for the question and each structure, opening on the view it is shown in", () => {
+    const onQuestion = render("/q/q1_grounding", cat);
+    expect(onQuestion).toContain('aria-label="Where this code sits"');
+    expect(onQuestion).toMatch(/role="tab" aria-selected="true"[^>]*>Q</);
+    expect(onQuestion).toContain("Q1 Grounding · Knowing the class");
+    expect(onQuestion).toContain(`title="A. The teacher's terms"`);
+    const onStructure = render("/s/A", cat);
+    expect(onStructure).toMatch(/role="tab" aria-selected="true"[^>]*>A</);
+    expect(onStructure).toContain("A1 · Tell it what it needs");
+    expect(onStructure).toContain('class="gloss">context only the teacher can supply<');
+  });
+
+  it("structure screen groups every code by one structure and filters to a group", () => {
+    const all = render("/s/A", cat);
+    expect(all).toContain("A. The teacher's terms");
+    expect(all).toContain("A1 · Tell it what it needs");
+    expect(all).toContain("A8 · Make checking cheap");
+    expect(all).toContain("Know the class</h4>");
+    expect(all).toContain("Check quickly</h4>");
+    expect(all).toContain("A8 is the checking cluster."); // the structure's notes, shown with every group
+    expect(all).toContain('aria-current="page"'); // the Structures tab in the bar, and the A pill
+    const one = render("/s/A?g=A8", cat);
+    expect(one).toContain("Check quickly</h4>");
+    expect(one).not.toContain("Know the class</h4>");
+    expect(one).not.toContain("A8 is the checking cluster.");
+    const build = render("/s/E", cat);
+    expect(build).toContain("T2"); // the tier gloss
+    expect(build).toContain('class="sublabel">Metrics'); // a sub-heading within a group
+    expect(build).toContain("Build notes: a class profile schema.");
+    expect(render("/s/Z", cat)).toContain("No structure with that letter");
+  });
+
   it("results screen counts thumbs per code and suggestion", () => {
     const html = render("/results", cat);
     expect(html).toContain("2 people have rated codes so far");
@@ -93,5 +125,9 @@ describe.skipIf(!existsSync(BUNDLE))("screens render (real bundle)", () => {
     }
     expect(render("/stories?org=epic", cat)).toContain(cat.epics[0].title);
     expect(render("/results", cat)).toContain("Results");
+    for (const st of cat.structures) {
+      const html = render(`/s/${st.id}`, cat);
+      for (const g of st.groups) expect(html).toContain(`${g.id} · ${g.title}`);
+    }
   });
 });
